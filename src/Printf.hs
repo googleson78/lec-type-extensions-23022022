@@ -7,6 +7,6 @@ module Printf where
 -- FormatArg - *Arg
 -- Parse
 -- SpanFormat
--- ToFormatArgs
+-- ToFormatArgs (TypeError, Text, ShowType :<>: ??)
 -- FormatArgsToFormat
 -- printf

@@ -15,7 +15,7 @@ module PrintfCheat where
 import Data.Kind (Type)
 import Data.Proxy (Proxy (Proxy))
 import Data.Symbol.Ascii (ToList)
-import GHC.TypeLits (AppendSymbol, KnownSymbol, Symbol, symbolVal)
+import GHC.TypeLits (AppendSymbol, ErrorMessage (..), KnownSymbol, Symbol, TypeError, symbolVal)
 
 data FormatType a where
   Fint :: FormatType Int
@@ -69,6 +69,7 @@ type family ToFormatArgs (syms :: [Symbol]) :: [FormatArg] where
   ToFormatArgs '[] = '[]
   ToFormatArgs ("%" ': "d" ': str) = IntArg ': ToFormatArgs str
   ToFormatArgs ("%" ': "s" ': str) = StringArg ': ToFormatArgs str
+  ToFormatArgs ("%" ': c ': str) = TypeError (Text "unrecognised format option: %" :<>: ShowType c)
   ToFormatArgs str =
     LitArg (Fst (SpanFormat str)) ': ToFormatArgs (Snd (SpanFormat str))
 

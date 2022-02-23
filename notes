@@ -22,7 +22,7 @@ type families (fst, snd, arg list to function) ' , type applications
 parse
 * symbols lib - ToList
 * SpanFormat
-* ToFormatArgs
+* ToFormatArgs (TypeError? Text, ShowType)
 
 Symbol, KnownSymbol
 
