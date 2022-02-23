@@ -7,12 +7,12 @@ what should printf type be???
 types and kinds refresher?
 
 * :kind
-* :kind!
 * Type vs *
 
 gadts - typed interpreter + &&, states anonymous logged in
 data kinds, states
 Symbol, AppendSymbol
+:kind!
 
 format with gadts - the "printfFormmat accumulation hack"
 
