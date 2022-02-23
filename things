@@ -1,0 +1,13 @@
+types and kinds refresher?
+:kind
+:kind!
+gadts - typed interpreter?
+
+
+
+
+data kinds
+type families, type applications
+'
+Symbol, KnownSymbol
+MPTC, fundeps
