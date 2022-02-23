@@ -53,22 +53,27 @@ type family GroupFormats (syms :: [Symbol]) :: [Symbol] where
   GroupFormats str =
     Fst (SpanFormat str) ': GroupFormats (Snd (SpanFormat str))
 
-class FormatBla (format :: [FormatArg]) res | format -> res where
-  fmt :: Format res
+class FormatBla (format :: [FormatArg]) where
+  type Res format
+  fmt :: Format (Res format)
 
-instance FormatBla rest res' => FormatBla (FInt ': rest) (Int -> res') where
+instance FormatBla rest => FormatBla (FInt ': rest) where
+  type Res (FInt ': rest) = Int -> Res rest
   fmt = Fint :% fmt @rest
 
-instance FormatBla rest res' => FormatBla (FString ': rest) (String -> res') where
+instance FormatBla rest => FormatBla (FString ': rest) where
+  type Res (FString ': rest) = String -> Res rest
   fmt = Fstr :% fmt @rest
 
-instance (FormatBla rest res', KnownSymbol sym) => FormatBla (Lit sym ': rest) res' where
+instance (FormatBla rest, KnownSymbol sym) => FormatBla (Lit sym ': rest) where
+  type Res (Lit sym ': rest) = Res rest
   fmt = symbolVal (Proxy @sym) :> fmt @rest
 
-instance FormatBla '[] String where
+instance FormatBla '[] where
+  type Res '[] = String
   fmt = FNil
 
-printf' :: forall sym res. FormatBla (Parse sym) res => res
+printf' :: forall sym res. FormatBla (Parse sym) => Res (Parse sym)
 printf' = printf $ fmt @(Parse sym)
 
 data FormatV a where

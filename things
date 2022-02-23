@@ -1,13 +1,15 @@
 types and kinds refresher?
 :kind
 :kind!
+Type vs *
 gadts - typed interpreter?
 
 
 
 
 data kinds
-type families, type applications
+type families (arg list to function), type applications
 '
 Symbol, KnownSymbol
-MPTC, fundeps
+
+if time => MPTC, fundeps
