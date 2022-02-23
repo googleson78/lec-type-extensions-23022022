@@ -14,10 +14,10 @@
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-import Data.Kind
+import Data.Kind (Type)
 import Data.Proxy (Proxy (Proxy))
-import Data.Symbol.Ascii
-import GHC.TypeLits
+import Data.Symbol.Ascii (ToList)
+import GHC.TypeLits (AppendSymbol, KnownSymbol, Symbol, symbolVal)
 
 data FormatArg
   = LitArg Symbol
