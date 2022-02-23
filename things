@@ -12,4 +12,5 @@ type families (fst, snd, arg list to function), type applications
 '
 Symbol, KnownSymbol
 
+if time => associated types
 if time => MPTC, fundeps
