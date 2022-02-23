@@ -25,13 +25,7 @@ data FormatArg
   | StringArg
 
 type family Parse (str :: Symbol) :: [FormatArg] where
-  Parse str = ToFormatArgs (GroupFormats (ToList str))
-
-type family ToFormatArgs (syms :: [Symbol]) :: [FormatArg] where
-  ToFormatArgs '[] = '[]
-  ToFormatArgs ("%v" ': str) = IntArg ': ToFormatArgs str
-  ToFormatArgs ("%s" ': str) = StringArg ': ToFormatArgs str
-  ToFormatArgs (s ': str) = LitArg s ': ToFormatArgs str
+  Parse str = ToFormatArgs (ToList str)
 
 type family Fst (tup :: (a, b)) where
   Fst '(x, y) = x
@@ -47,11 +41,12 @@ type family SpanFormat (syms :: [Symbol]) :: (Symbol, [Symbol]) where
        Snd (SpanFormat xs)
      )
 
-type family GroupFormats (syms :: [Symbol]) :: [Symbol] where
-  GroupFormats '[] = '[]
-  GroupFormats ("%" ': c ': str) = AppendSymbol "%" c ': GroupFormats str
-  GroupFormats str =
-    Fst (SpanFormat str) ': GroupFormats (Snd (SpanFormat str))
+type family ToFormatArgs (syms :: [Symbol]) :: [FormatArg] where
+  ToFormatArgs '[] = '[]
+  ToFormatArgs ("%" ': "v" ': str) = IntArg ': ToFormatArgs str
+  ToFormatArgs ("%" ': "s" ': str) = StringArg ': ToFormatArgs str
+  ToFormatArgs str =
+    LitArg (Fst (SpanFormat str)) ': ToFormatArgs (Snd (SpanFormat str))
 
 type family ResFormatArgsToFormat (format :: [FormatArg]) :: Type where
   ResFormatArgsToFormat (IntArg ': rest) = Int -> ResFormatArgsToFormat rest
