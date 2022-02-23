@@ -77,17 +77,17 @@ instance FormatArgsToFormat '[] where
 printf' :: forall sym res. FormatArgsToFormat (Parse sym) => ResFormatArgsToFormat (Parse sym)
 printf' = printf $ fmt @(Parse sym)
 
-data FormatV a where
-  Fint :: FormatV Int
-  Fstr :: FormatV String
+data FormatType a where
+  Fint :: FormatType Int
+  Fstr :: FormatType String
 
-showFormatted :: FormatV a -> a -> String
+showFormatted :: FormatType a -> a -> String
 showFormatted Fint x = show x
 showFormatted Fstr x = x
 
 data Format a where
   FNil :: Format String
-  (:%) :: FormatV a -> Format b -> Format (a -> b)
+  (:%) :: FormatType a -> Format b -> Format (a -> b)
   (:>) :: String -> Format a -> Format a
 
 infixr 9 :%
