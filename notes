@@ -1,16 +1,32 @@
+why type extensions - program the compiler
+
+printf unsafe - even in hs
+
+what should printf type be???
+
 types and kinds refresher?
-:kind
-:kind!
-Type vs *
-gadts - typed interpreter?
+
+* :kind
+* :kind!
+* Type vs *
+
+gadts - typed interpreter + &&, states anonymous logged in
+data kinds, states
+Symbol, AppendSymbol
+
+format with gadts - the "printfFormmat accumulation hack"
 
 
+type families (fst, snd, arg list to function) ' , type applications
 
+parse
+* symbols lib - ToList
+* SpanFormat
+* ToFormatArgs
 
-data kinds
-type families (fst, snd, arg list to function), type applications
-'
 Symbol, KnownSymbol
+
+class to convert to gadt version - not necessary, but easier implementation and reuse
 
 if time => associated types
 if time => MPTC, fundeps
