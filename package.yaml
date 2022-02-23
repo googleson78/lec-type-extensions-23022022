@@ -1,0 +1,8 @@
+name:                type-ext
+
+dependencies:
+- base >= 4.7 && < 5
+- symbols
+
+library:
+  source-dirs: src
