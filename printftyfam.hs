@@ -43,7 +43,7 @@ type family SpanFormat (syms :: [Symbol]) :: (Symbol, [Symbol]) where
 
 type family ToFormatArgs (syms :: [Symbol]) :: [FormatArg] where
   ToFormatArgs '[] = '[]
-  ToFormatArgs ("%" ': "v" ': str) = IntArg ': ToFormatArgs str
+  ToFormatArgs ("%" ': "d" ': str) = IntArg ': ToFormatArgs str
   ToFormatArgs ("%" ': "s" ': str) = StringArg ': ToFormatArgs str
   ToFormatArgs str =
     LitArg (Fst (SpanFormat str)) ': ToFormatArgs (Snd (SpanFormat str))
