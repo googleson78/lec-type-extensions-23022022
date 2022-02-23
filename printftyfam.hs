@@ -20,18 +20,18 @@ import Data.Symbol.Ascii
 import GHC.TypeLits
 
 data FormatArg
-  = Lit Symbol
-  | FInt
-  | FString
+  = LitArg Symbol
+  | IntArg
+  | StringArg
 
 type family Parse (str :: Symbol) :: [FormatArg] where
   Parse str = ToFormatArgs (GroupFormats (ToList str))
 
 type family ToFormatArgs (syms :: [Symbol]) :: [FormatArg] where
   ToFormatArgs '[] = '[]
-  ToFormatArgs ("%v" ': str) = FInt ': ToFormatArgs str
-  ToFormatArgs ("%s" ': str) = FString ': ToFormatArgs str
-  ToFormatArgs (s ': str) = Lit s ': ToFormatArgs str
+  ToFormatArgs ("%v" ': str) = IntArg ': ToFormatArgs str
+  ToFormatArgs ("%s" ': str) = StringArg ': ToFormatArgs str
+  ToFormatArgs (s ': str) = LitArg s ': ToFormatArgs str
 
 type family Fst (tup :: (a, b)) where
   Fst '(x, y) = x
@@ -53,27 +53,28 @@ type family GroupFormats (syms :: [Symbol]) :: [Symbol] where
   GroupFormats str =
     Fst (SpanFormat str) ': GroupFormats (Snd (SpanFormat str))
 
-class FormatBla (format :: [FormatArg]) where
-  type Res format
-  fmt :: Format (Res format)
+type family ResFormatBla (format :: [FormatArg]) :: Type where
+  ResFormatBla (IntArg ': rest) = Int -> ResFormatBla rest
+  ResFormatBla (StringArg ': rest) = String -> ResFormatBla rest
+  ResFormatBla (LitArg _ ': rest) = ResFormatBla rest
+  ResFormatBla '[] = String
 
-instance FormatBla rest => FormatBla (FInt ': rest) where
-  type Res (FInt ': rest) = Int -> Res rest
+class FormatBla (format :: [FormatArg]) where
+  fmt :: Format (ResFormatBla format)
+
+instance FormatBla rest => FormatBla (IntArg ': rest) where
   fmt = Fint :% fmt @rest
 
-instance FormatBla rest => FormatBla (FString ': rest) where
-  type Res (FString ': rest) = String -> Res rest
+instance FormatBla rest => FormatBla (StringArg ': rest) where
   fmt = Fstr :% fmt @rest
 
-instance (FormatBla rest, KnownSymbol sym) => FormatBla (Lit sym ': rest) where
-  type Res (Lit sym ': rest) = Res rest
+instance (FormatBla rest, KnownSymbol sym) => FormatBla (LitArg sym ': rest) where
   fmt = symbolVal (Proxy @sym) :> fmt @rest
 
 instance FormatBla '[] where
-  type Res '[] = String
   fmt = FNil
 
-printf' :: forall sym res. FormatBla (Parse sym) => Res (Parse sym)
+printf' :: forall sym res. FormatBla (Parse sym) => ResFormatBla (Parse sym)
 printf' = printf $ fmt @(Parse sym)
 
 data FormatV a where
