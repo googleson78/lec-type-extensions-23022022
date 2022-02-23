@@ -19,6 +19,32 @@ import Data.Proxy (Proxy (Proxy))
 import Data.Symbol.Ascii (ToList)
 import GHC.TypeLits (AppendSymbol, KnownSymbol, Symbol, symbolVal)
 
+data FormatType a where
+  Fint :: FormatType Int
+  Fstr :: FormatType String
+
+showFormatted :: FormatType a -> a -> String
+showFormatted Fint x = show x
+showFormatted Fstr x = x
+
+data Format a where
+  FNil :: Format String
+  (:%) :: FormatType a -> Format b -> Format (a -> b)
+  (:>) :: String -> Format a -> Format a
+
+infixr 9 :%
+
+infixr 9 :>
+
+printfFormat :: Format a -> a
+printfFormat = go []
+  where
+    go :: [String] -> Format a -> a
+    go acc FNil = concat $ reverse acc
+    go acc (pa :> rest) = go (pa : acc) rest
+    go acc (pa :% rest) =
+      \x -> go (showFormatted pa x : acc) rest
+
 data FormatArg
   = LitArg Symbol
   | IntArg
@@ -71,29 +97,3 @@ instance FormatArgsToFormat '[] where
 
 printf :: forall sym res. FormatArgsToFormat (Parse sym) => ResFormatArgsToFormat (Parse sym)
 printf = printfFormat $ fmt @(Parse sym)
-
-data FormatType a where
-  Fint :: FormatType Int
-  Fstr :: FormatType String
-
-showFormatted :: FormatType a -> a -> String
-showFormatted Fint x = show x
-showFormatted Fstr x = x
-
-data Format a where
-  FNil :: Format String
-  (:%) :: FormatType a -> Format b -> Format (a -> b)
-  (:>) :: String -> Format a -> Format a
-
-infixr 9 :%
-
-infixr 9 :>
-
-printfFormat :: Format a -> a
-printfFormat = go []
-  where
-    go :: [String] -> Format a -> a
-    go acc FNil = concat $ reverse acc
-    go acc (pa :> rest) = go (pa : acc) rest
-    go acc (pa :% rest) =
-      \x -> go (showFormatted pa x : acc) rest
