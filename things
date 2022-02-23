@@ -8,7 +8,7 @@ gadts - typed interpreter?
 
 
 data kinds
-type families (arg list to function), type applications
+type families (fst, snd, arg list to function), type applications
 '
 Symbol, KnownSymbol
 
