@@ -69,8 +69,8 @@ instance (FormatArgsToFormat rest, KnownSymbol sym) => FormatArgsToFormat (LitAr
 instance FormatArgsToFormat '[] where
   fmt = FNil
 
-printf' :: forall sym res. FormatArgsToFormat (Parse sym) => ResFormatArgsToFormat (Parse sym)
-printf' = printf $ fmt @(Parse sym)
+printf :: forall sym res. FormatArgsToFormat (Parse sym) => ResFormatArgsToFormat (Parse sym)
+printf = printfFormat $ fmt @(Parse sym)
 
 data FormatType a where
   Fint :: FormatType Int
@@ -89,8 +89,8 @@ infixr 9 :%
 
 infixr 9 :>
 
-printf :: Format a -> a
-printf = go []
+printfFormat :: Format a -> a
+printfFormat = go []
   where
     go :: [String] -> Format a -> a
     go acc FNil = concat $ reverse acc
